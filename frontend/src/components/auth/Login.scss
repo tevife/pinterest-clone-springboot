@@ -1,0 +1,81 @@
+$bootstrap-info-color: #5bc0de;
+
+.login {
+  max-width: 333px;
+  margin: 60px auto;
+  padding: 0 20px;
+  text-align: center;
+
+  form {
+    display: flex;
+    flex-direction: column;
+
+    input {
+      margin-bottom: 5px;
+      font-size: 18px;
+      padding: 10px;
+      border-radius: 5px;
+      border: 1px solid #777;
+      transition: 0.15s ease-in-out all;
+
+      &:focus {
+        outline: none;
+        box-shadow: 0 0 5px $bootstrap-info-color;
+        border: 1px solid $bootstrap-info-color;
+      }
+    }
+
+    button {font-size: 18px;
+      margin-top: 10px;
+      width: 50%;
+      align-self: center;
+      border: none;
+      border-radius: 5px;
+      background-color: $bootstrap-info-color;
+      color: white;
+      padding: 5px;
+      transition: 0.15s ease-in-out all;
+
+      &:hover {
+        background-color: darken($bootstrap-info-color, 10%);
+      }
+
+      &:disabled {
+        background-color: lighten($bootstrap-info-color, 20%);
+      }
+    }
+  }
+
+  .lss_msg {
+    button {
+      border: none;
+      background-color: inherit;
+      font-size: 16px;
+      font-style: italic;
+      color: purple;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+
+  .social_login {
+    display: flex;
+    flex-direction: column;
+
+    a {
+      margin-bottom: 10px;
+      text-decoration: none;
+      color: black;
+      border: 1px solid black;
+      border-radius: 5px;
+      padding: 10px;
+
+      &:hover {
+        background-color: lighten($bootstrap-info-color, 33%);
+        transition: all 0.2s ease-in-out;
+      }
+    }
+  }
+}

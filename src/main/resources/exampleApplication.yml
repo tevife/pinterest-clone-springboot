@@ -1,0 +1,40 @@
+logging:
+  level:
+    org.springframework:
+      web: DEBUG
+      security: DEBUG
+server:
+  error:
+    include-stacktrace: never
+    include-binding-errors: always
+    include-exception: true
+    include-message: always
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: update
+    defer-datasource-initialization: true
+  h2:
+    console:
+      enabled: true
+  security:
+    oauth2:
+      client:
+        registration:
+          github:
+            client-id:
+            client-secret:
+            scope: read:user, user:email
+          google:
+            client-id:
+            client-secret:
+            scope: profile, email
+
+app:
+  auth:
+    tokenSecret: trokuttrokuttrokuttrokuttrokuttrokuttrokuttrokuttrokuttrokuttrokuttrokuttrokuttrokuttrokut
+    tokenExpirationDays: 3
+  oauth2:
+    redirectUri: http://localhost:5173/oauth2/redirect
+  cors:
+    allowedOrigins: http://localhost:5173
