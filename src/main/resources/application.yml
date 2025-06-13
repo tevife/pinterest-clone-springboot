@@ -10,3 +10,12 @@ spring:
   sql:
     init:
       mode: always
+
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${spring.security.oauth2.client.registration.google.client-id}
+            client-secret: ${spring.security.oauth2.client.registration.google.client-secret}
+            redirect-uri: ${spring.security.oauth2.client.registration.google.redirect-uri}
