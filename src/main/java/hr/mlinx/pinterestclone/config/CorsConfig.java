@@ -15,16 +15,17 @@ public class CorsConfig {
     @Value("${app.cors.allowedOrigins}")
     private List<String> allowedOrigins;
 
-    @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration cors = new CorsConfiguration();
-        cors.setAllowCredentials(true);
-        cors.setAllowedOrigins(allowedOrigins);
-        cors.addAllowedMethod("*");
-        cors.addAllowedHeader("*");
+  @Bean
+public CorsConfigurationSource corsConfigurationSource(
+    @Value("${app.cors.allowedOrigins}") List<String> allowedOrigins
+) {
+    CorsConfiguration cors = new CorsConfiguration();
+    cors.setAllowCredentials(true);
+    cors.setAllowedOrigins(allowedOrigins);
+    cors.addAllowedMethod("*");
+    cors.addAllowedHeader("*");
 
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", cors);
-        return source;
-    }
+    UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+    source.registerCorsConfiguration("/**", cors);
+    return source;
 }
