@@ -13,7 +13,7 @@ import java.util.List;
 public class CorsConfig {
 
     @Bean
-    public CorsConfigurationSource corsConfigurationSource(@Value("${app.cors.allowedOrigins}") List<String> allowedOrigins) {
+    public CorsConfigurationSource corsConfigurationSource(@Value("#{'${app.cors.allowedOrigins}'.split(',')}") List<String> allowedOrigins) {
         CorsConfiguration cors = new CorsConfiguration();
         cors.setAllowCredentials(true);
         cors.setAllowedOrigins(allowedOrigins);
