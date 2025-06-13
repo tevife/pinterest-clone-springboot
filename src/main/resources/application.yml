@@ -19,3 +19,8 @@ spring:
             client-id: ${spring.security.oauth2.client.registration.google.client-id}
             client-secret: ${spring.security.oauth2.client.registration.google.client-secret}
             redirect-uri: ${spring.security.oauth2.client.registration.google.redirect-uri}
+app:
+  cors:
+    allowedOrigins:
+      - "http://localhost:5173"
+      - "https://pinterest-clone-springboot.onrender.com"
