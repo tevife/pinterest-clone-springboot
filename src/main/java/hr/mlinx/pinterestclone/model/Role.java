@@ -21,4 +21,8 @@ public class Role {
     @Enumerated(EnumType.STRING)
     private RoleName name;
 
+    // ← ESTE CONSTRUTOR DEVE ESTAR AQUI DENTRO
+    public Role(RoleName name) {
+        this.name = name;
+    }
 }
