@@ -15,8 +15,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import static hr.mlinx.pinterestclone.controller.AuthController.giveRoleOfUser;
-
 @Slf4j
 @SpringBootApplication
 public class PinterestcloneApplication {
@@ -28,25 +26,35 @@ public class PinterestcloneApplication {
     @Bean
     public CommandLineRunner loadData(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder) {
         return args -> {
-            User user = new User();
+            // Cria roles se não existirem
+            if (!roleRepository.existsByName(RoleName.ROLE_USER))
+                roleRepository.save(new Role(RoleName.ROLE_USER));
+            if (!roleRepository.existsByName(RoleName.ROLE_MODERATOR))
+                roleRepository.save(new Role(RoleName.ROLE_MODERATOR));
+            if (!roleRepository.existsByName(RoleName.ROLE_ADMIN))
+                roleRepository.save(new Role(RoleName.ROLE_ADMIN));
 
-            user.setUsername("admin");
-            user.setPassword(passwordEncoder.encode("admin"));
-            user.setEmail("admin@admin");
-            user.setImageUrl(Defaults.IMAGE_URL);
-            user.setAuthProvider(AuthProvider.LOCAL);
+            // Cria usuário admin se ainda não existir
+            if (!userRepository.existsByUsername("admin")) {
+                User user = new User();
+                user.setUsername("admin");
+                user.setPassword(passwordEncoder.encode("admin"));
+                user.setEmail("admin@admin");
+                user.setImageUrl(Defaults.IMAGE_URL);
+                user.setAuthProvider(AuthProvider.LOCAL);
 
-            Role modRole = roleRepository.findByName(RoleName.ROLE_MODERATOR)
-                    .orElseThrow(() -> new ResourceNotFoundException("role", "name", RoleName.ROLE_MODERATOR.name()));
-            user.getRoles().add(modRole);
-            Role userRole = roleRepository.findByName(RoleName.ROLE_ADMIN)
-                    .orElseThrow(() -> new ResourceNotFoundException("role", "name", RoleName.ROLE_ADMIN.name()));
-            user.getRoles().add(userRole);
+                Role modRole = roleRepository.findByName(RoleName.ROLE_MODERATOR)
+                        .orElseThrow(() -> new ResourceNotFoundException("role", "name", RoleName.ROLE_MODERATOR.name()));
+                Role adminRole = roleRepository.findByName(RoleName.ROLE_ADMIN)
+                        .orElseThrow(() -> new ResourceNotFoundException("role", "name", RoleName.ROLE_ADMIN.name()));
 
-            userRepository.save(user);
+                user.getRoles().add(modRole);
+                user.getRoles().add(adminRole);
 
-            log.info("Created user 'admin' with admin rights and the password 'admin'");
+                userRepository.save(user);
+
+                log.info("Created user 'admin' with admin and moderator roles (password: 'admin')");
+            }
         };
     }
-
 }
