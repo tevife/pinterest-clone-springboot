@@ -11,21 +11,16 @@ import java.util.List;
 
 @Configuration
 public class CorsConfig {
-
-    @Value("${app.cors.allowedOrigins}")
-    private List<String> allowedOrigins;
-
-  @Bean
-public CorsConfigurationSource corsConfigurationSource(
-    @Value("${app.cors.allowedOrigins}") List<String> allowedOrigins
-) {
-    CorsConfiguration cors = new CorsConfiguration();
-    cors.setAllowCredentials(true);
-    cors.setAllowedOrigins(allowedOrigins);
-    cors.addAllowedMethod("*");
-    cors.addAllowedHeader("*");
-
-    UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-    source.registerCorsConfiguration("/**", cors);
-    return source;
+    
+    @Bean
+    public CorsFilter corsFilter() {
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        CorsConfiguration config = new CorsConfiguration();
+        config.addAllowedOrigin("*");
+        config.addAllowedHeader("*");
+        config.addAllowedMethod("*");
+        source.registerCorsConfiguration("/**", config);
+        return new CorsFilter(source);
+    // <- esqueceu de fechar esse método aqui
 }
+// <- esqueceu de fechar a classe aqui
