@@ -1,9 +1,13 @@
 import React from "react";
-import {Navigate} from 'react-router-dom';
-import {useAuth} from "../context/AuthProvider";
+import { Navigate } from "react-router-dom";
+import { useAuth } from "../context/AuthProvider";
 
-const UserRoute: React.FC =(props: {children}) => {
-    return useAuth().isUser() ? props.children : <Navigate to={'/'} replace={true}/>
+interface UserRouteProps {
+  children: React.ReactNode;
 }
+
+const UserRoute: React.FC<UserRouteProps> = ({ children }) => {
+  return useAuth().isUser() ? children : <Navigate to="/" replace={true} />;
+};
 
 export default UserRoute;

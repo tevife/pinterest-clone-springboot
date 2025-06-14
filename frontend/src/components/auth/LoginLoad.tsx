@@ -1,15 +1,11 @@
 import React from "react";
-import './LoginLoad.scss';
 
-const LoginLoad: React.FC = (props: {
-    message: string
-}) => {
-    return (
-        <div className={'login_load'}>
-            <div className="lds-hourglass"></div>
-            <p>{props.message}</p>
-        </div>
-    );
+interface LoginLoadProps {
+  message: string;
 }
+
+const LoginLoad: React.FC<LoginLoadProps> = ({ message }) => {
+  return <div>{message}</div>;
+};
 
 export default LoginLoad;

@@ -4,15 +4,20 @@ import PostGrid from "../posts/PostGrid";
 import {useParams} from "react-router-dom";
 
 const UserPosts: React.FC = () => {
-    const {userId} = useParams();
+    const {userId} = useParams<{ userId?: string }>();
+
+    if (!userId) {
+        return <Navigate to={'/'} replace={true} />;
+    }
+
     const userIdParsed = parseInt(userId);
 
     if (isNaN(userIdParsed)) {
-        return <Navigate to={'/'} replace={true}/>;
+        return <Navigate to={'/'} replace={true} />;
     }
 
     return (
-        <PostGrid userId={userId}/>
+        <PostGrid userId={userIdParsed} />
     );
 }
 

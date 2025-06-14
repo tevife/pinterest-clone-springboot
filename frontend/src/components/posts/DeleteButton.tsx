@@ -1,15 +1,17 @@
-import React, {useState} from "react";
+import React, { useState } from "react";
 import axios from "axios";
 import makeConfig from "../../util/axiosConfig";
 import IGenericApiResponse from "../../models/IGenericApiResponse";
 import './DeleteButton.scss';
-import {TOKEN_COOKIE_NAME, useAuth} from "../context/AuthProvider";
+import { TOKEN_COOKIE_NAME, useAuth } from "../context/AuthProvider";
 
-const DeleteButton: React.FC = (props: {
-    postId: number
-}) => {
+interface DeleteButtonProps {
+    postId: number;
+}
+
+const DeleteButton: React.FC<DeleteButtonProps> = ({ postId }) => {
     const [deleting, setDeleting] = useState<boolean>(false);
-    const {isModerator, cookies} = useAuth();
+    const { isModerator, cookies } = useAuth();
 
     const handleDelete = () => {
         if (!window.confirm("Are you sure you want to delete this post?")) {
@@ -20,12 +22,11 @@ const DeleteButton: React.FC = (props: {
 
         (async () => {
             try {
-                const route: string = `/api/${isModerator() ? 'mod' : 'user'}/post/${props.postId}`;
-                const {data} = await axios<IGenericApiResponse>(makeConfig(
-                    'DELETE', route, cookies[TOKEN_COOKIE_NAME]));
-                const response = data as IGenericApiResponse;
-                console.log(response.message);
-
+                const route: string = `/api/${isModerator() ? 'mod' : 'user'}/post/${postId}`;
+                const { data } = await axios<IGenericApiResponse>(
+                    makeConfig('DELETE', route, cookies[TOKEN_COOKIE_NAME])
+                );
+                console.log(data.message);
                 window.location.reload();
             } catch (error) {
                 console.log(error);
@@ -33,7 +34,7 @@ const DeleteButton: React.FC = (props: {
                 setDeleting(false);
             }
         })();
-    }
+    };
 
     return (
         <button
@@ -44,6 +45,6 @@ const DeleteButton: React.FC = (props: {
             <i className={'fa-solid fa-trash'}></i>
         </button>
     );
-}
+};
 
 export default DeleteButton;

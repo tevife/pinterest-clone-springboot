@@ -9,11 +9,15 @@ export interface IToken {
 }
 
 export const areInvalidCredentials = (credentials: ICredentials, emailProvided: boolean) => {
-    if (isInvalidUsername(credentials.username) ||isInvalidPassword(credentials.password))
+    if (isInvalidUsername(credentials.username) || isInvalidPassword(credentials.password))
         return true;
 
     if (emailProvided) {
-        return credentials.email?.length <= 0 || credentials.email?.length > 320;
+        return (
+            !credentials.email ||
+            credentials.email.length <= 0 ||
+            credentials.email.length > 320
+        );
     } else {
         return false;
     }

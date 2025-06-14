@@ -1,8 +1,8 @@
-import IUser, {ERoleName} from "../../models/IUser";
-import React, {createContext, useContext, useState} from "react";
-import {useNavigate} from 'react-router-dom';
-import {useCookies} from "react-cookie";
-import ICredentials, {IToken} from "../../models/ICredentials";
+import IUser, { ERoleName } from "../../models/IUser";
+import React, { createContext, useContext, useState, ReactNode } from "react";
+import { useNavigate } from 'react-router-dom';
+import { useCookies } from "react-cookie";
+import ICredentials, { IToken } from "../../models/ICredentials";
 import axios from "axios";
 import makeConfig from "../../util/axiosConfig";
 
@@ -13,12 +13,12 @@ const useValue = () => {
     const [cookies, setCookies, removeCookie] = useCookies();
     const navigate = useNavigate();
 
-    const  authenticate = async () => {
+    const authenticate = async () => {
         try {
             if (typeof cookies[TOKEN_COOKIE_NAME] === 'undefined') {
                 return;
             }
-            const {data} = await axios<IUser>(makeConfig('GET', '/api/user/me', cookies[TOKEN_COOKIE_NAME]));
+            const { data } = await axios<IUser>(makeConfig('GET', '/api/user/me', cookies[TOKEN_COOKIE_NAME]));
             setUser(data as IUser);
         } catch (error) {
             console.log(error);
@@ -28,9 +28,9 @@ const useValue = () => {
 
     const localLogin = async (credentials: ICredentials) => {
         try {
-            const {data} = await axios<IToken>(makeConfig('POST', '/auth/login', undefined, credentials));
+            const { data } = await axios<IToken>(makeConfig('POST', '/auth/login', undefined, credentials));
             const response = data as IToken;
-            setCookies(TOKEN_COOKIE_NAME, response.token, {path: '/'});
+            setCookies(TOKEN_COOKIE_NAME, response.token, { path: '/' });
             navigate('/');
             window.location.reload();
         } catch (error) {
@@ -40,9 +40,9 @@ const useValue = () => {
 
     const localSignup = async (credentials: ICredentials) => {
         try {
-            const {data} = await axios<IToken>(makeConfig('POST', '/auth/signup', undefined, credentials));
+            const { data } = await axios<IToken>(makeConfig('POST', '/auth/signup', undefined, credentials));
             const response = data as IToken;
-            setCookies(TOKEN_COOKIE_NAME, response.token, {path: '/'});
+            setCookies(TOKEN_COOKIE_NAME, response.token, { path: '/' });
             navigate('/');
             window.location.reload();
         } catch (error) {
@@ -85,10 +85,14 @@ const useValue = () => {
 export const UserContext = createContext({} as ReturnType<typeof useValue>);
 export const useAuth = () => useContext(UserContext);
 
-export const UserProvider = (props: {children}) => {
+interface Props {
+    children: ReactNode;
+}
+
+export const UserProvider: React.FC<Props> = ({ children }) => {
     return (
         <UserContext.Provider value={useValue()}>
-            {props.children}
+            {children}
         </UserContext.Provider>
-    )
-}
+    );
+};

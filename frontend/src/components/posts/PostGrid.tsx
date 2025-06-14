@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import IPost, {IPosts} from "../../models/IPost";
+import IPost from "../../models/IPost";
 import axios from "axios";
 import makeConfig from "../../util/axiosConfig";
 import Masonry from "react-masonry-css";
@@ -7,32 +7,33 @@ import Post from "./Post";
 import './PostGrid.scss';
 import {useAuth} from "../context/AuthProvider";
 
-const PostGrid: React.FC = (props: {
-    userId?: number
-}) => {
-    const [posts, setPosts] = useState<IPosts>([]);
+interface PostGridProps {
+    userId?: number;
+}
+
+const PostGrid: React.FC<PostGridProps> = ({ userId }) => {
+    const [posts, setPosts] = useState<IPost[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const {user: currentUser} = useAuth();
 
     useEffect(() => {
-        let route = "/api/public/posts"
-            + (typeof props.userId === 'undefined' ? '' : '/' + props.userId);
+        const route = userId ? `/api/public/posts/${userId}` : "/api/public/posts";
 
         (async () => {
             try {
-                const { data } = await axios<IPosts>(makeConfig(
-                    'GET', route
-                ));
-
-                const posts = data as IPosts;
-                setPosts(posts.reverse() as IPosts); // response has posts ordered older->newer
+                const { data } = await axios<IPost[]>(makeConfig('GET', route));
+                setPosts([...data].reverse()); // ordenação do mais novo para o mais antigo
             } catch (error) {
-                console.log(error.response.data.message);
+                if (axios.isAxiosError(error) && error.response) {
+                    console.log((error.response.data as any).message);
+                } else {
+                    console.log(error);
+                }
             } finally {
                 setLoading(false);
             }
         })();
-    }, []);
+    }, [userId]);
 
     return (
         <>
@@ -43,16 +44,21 @@ const PostGrid: React.FC = (props: {
                     700: 2,
                     420: 1
                 }}
-                className={"my-masonry-grid"}
-                columnClassName={"my-masonry-grid_column"}
+                className="my-masonry-grid"
+                columnClassName="my-masonry-grid_column"
             >
-                {
-                    !loading &&
-                    (posts.length > 0
-                        ? posts.map((post: IPost, idx: number) =>
-                            <Post post={post} key={post.id} idx={idx} currentUserId={currentUser?.id}/>)
-                        : <p className={'no_posts'}>No posts.</p>)
-                }
+                {!loading && (
+                    posts.length > 0
+                        ? posts.map((post, idx) => (
+                            <Post
+                                key={post.id}
+                                post={post}
+                                idx={idx}
+                                currentUserId={currentUser?.id}
+                            />
+                        ))
+                        : <p className="no_posts">No posts.</p>
+                )}
             </Masonry>
         </>
     );

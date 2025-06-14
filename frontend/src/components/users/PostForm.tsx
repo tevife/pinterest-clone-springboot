@@ -14,16 +14,19 @@ const PostForm: React.FC = () => {
 
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-
         setPosting(true);
 
         try {
             await axios(makeConfig('POST', '/api/user/createPost', cookies[TOKEN_COOKIE_NAME], {
-                imageUrl: postUrl, description: postDescription
+                imageUrl: postUrl,
+                description: postDescription
             }));
 
             setPosting(false);
-            navigate('/' + user.id);
+
+            if (user) {
+                navigate('/' + user.id);
+            }
         } catch (error) {
             console.error(error);
             setPosting(false);
@@ -32,7 +35,7 @@ const PostForm: React.FC = () => {
 
     return(
       <div className={'post_form'}>
-          <form onSubmit={handleSubmit} disabled>
+          <form onSubmit={handleSubmit}>
               <input
                   type="url"
                   placeholder="Post image URL (required)"

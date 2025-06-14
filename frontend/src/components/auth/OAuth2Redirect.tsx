@@ -16,13 +16,12 @@ const OAuth2Redirect: React.FC = () => {
     const [errorMessage, setErrorMessage] = useState<string>();
 
     useEffect(() => {
-        const errorParam: string = query.get('error');
-        if (errorParam) {
+        const errorParam: string = query.get('error') || '';        if (errorParam) {
             setErrorMessage(errorParam);
             return;
         }
 
-        const token: string = query.get('token');
+        const token = query.get('token') ?? '';
         setCookies(TOKEN_COOKIE_NAME, token, {path: '/'});
         navigate('/');
         window.location.reload();

@@ -6,11 +6,13 @@ import {useAuth} from "../context/AuthProvider";
 import LikeButton from "./LikeButton";
 import DeleteButton from "./DeleteButton";
 
-const Post: React.FC = (props: {
-    post: IPost,
-    idx: number,
-    currentUserId?: number
-}) => {
+interface PostProps {
+    post: IPost;
+    idx: number;
+    currentUserId?: number;
+}
+
+const Post: React.FC<PostProps> = ({ post, idx, currentUserId }) => {
     const {userId} = useParams();
     const navigate = useNavigate();
     const {isUser, isModerator} = useAuth();
@@ -18,23 +20,23 @@ const Post: React.FC = (props: {
     return (
         <div className={"grid-item"}>
             <img
-                src={props.post.imageUrl}
-                alt={props.post.description}
+                src={post.imageUrl}
+                alt={post.description}
                 className={"pic"}
             />
             <div className={"description"}>
-                {props.post.description}
+                {post.description}
             </div>
             <div className={"post_actions"}>
                 <img
-                    src={props.post.creator.imageUrl}
-                    alt={props.post.creator.username}
+                    src={post.creator.imageUrl}
+                    alt={post.creator.username}
                     className={"user_avatar"}
-                    id={`my-anchor-element-${props.idx}`}
-                    data-tooltip-content={`@${props.post.creator.username}`}
+                    id={`my-anchor-element-${idx}`}
+                    data-tooltip-content={`@${post.creator.username}`}
                     data-tooltip-place={"bottom"}
                     onClick={() => {
-                        const creatorId = props.post.creator.id;
+                        const creatorId = post.creator.id;
 
                         if (typeof userId !== 'undefined') {
                             if (userId !== `${creatorId}`) {
@@ -45,12 +47,12 @@ const Post: React.FC = (props: {
                         }
                     }}
                 />
-                <Tooltip anchorId={`my-anchor-element-${props.idx}`} clickable/>
+                <Tooltip anchorId={`my-anchor-element-${idx}`} clickable/>
                 <div className={"action_buttons"}>
-                    <LikeButton post={props.post} currentUserId={props.currentUserId}/>
+                    <LikeButton post={post} currentUserId={currentUserId || 0}/>
                     {
-                        (isModerator() || (isUser() && props.post.creator.id === props.currentUserId))
-                        && <DeleteButton postId={props.post.id}/>
+                        (isModerator() || (isUser() && post.creator.id === currentUserId)) &&
+                        <DeleteButton postId={post.id}/>
                     }
                 </div>
             </div>
