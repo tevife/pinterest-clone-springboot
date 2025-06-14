@@ -1,4 +1,4 @@
-import {AxiosRequestConfig} from 'axios';
+import { AxiosRequestConfig } from 'axios';
 
 export default function makeConfig(
     method: string,
@@ -12,9 +12,8 @@ export default function makeConfig(
         headers: {
             'Accept': 'application/json',
             'Content-Type': 'application/json',
-            'Authorization': "Bearer " + (typeof token !== 'undefined' ? token : '')
+            ...(token && { 'Authorization': `Bearer ${token}` })
         },
-        withCredentials: typeof token !== 'undefined',
         data: data
     };
 }
