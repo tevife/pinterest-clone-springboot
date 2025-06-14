@@ -15,58 +15,70 @@ const useValue = () => {
 
     const authenticate = async () => {
         try {
-            if (typeof cookies[TOKEN_COOKIE_NAME] === 'undefined') {
-                return;
-            }
-            const { data } = await axios<IUser>(makeConfig('GET', '/api/user/me', cookies[TOKEN_COOKIE_NAME]));
+            const token = cookies[TOKEN_COOKIE_NAME];
+            if (typeof token === 'undefined') return;
+
+            // Setar token globalmente
+            axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+
+            const { data } = await axios<IUser>('/api/user/me');
             setUser(data as IUser);
         } catch (error) {
             console.log(error);
             logout();
         }
-    }
+    };
 
     const localLogin = async (credentials: ICredentials) => {
         try {
             const { data } = await axios<IToken>(makeConfig('POST', '/auth/login', undefined, credentials));
             const response = data as IToken;
+
             setCookies(TOKEN_COOKIE_NAME, response.token, { path: '/' });
+
+            // Setar token globalmente após login
+            axios.defaults.headers.common['Authorization'] = `Bearer ${response.token}`;
+
             navigate('/');
             window.location.reload();
         } catch (error) {
             throw error;
         }
-    }
+    };
 
     const localSignup = async (credentials: ICredentials) => {
         try {
             const { data } = await axios<IToken>(makeConfig('POST', '/auth/signup', undefined, credentials));
             const response = data as IToken;
+
             setCookies(TOKEN_COOKIE_NAME, response.token, { path: '/' });
+
+            // Setar token globalmente após signup
+            axios.defaults.headers.common['Authorization'] = `Bearer ${response.token}`;
+
             navigate('/');
             window.location.reload();
         } catch (error) {
             throw error;
         }
-    }
+    };
 
     const logout = () => {
         setUser(undefined);
         removeCookie(TOKEN_COOKIE_NAME);
+        delete axios.defaults.headers.common['Authorization'];
         navigate('/');
-    }
+    };
 
-    const isUser = (): boolean => {
-        return typeof user !== 'undefined';
-    }
+    const isUser = (): boolean => typeof user !== 'undefined';
 
     const isModerator = (): boolean => {
-        return user?.roles.some(role => role.name === ERoleName.MOD) as boolean;
-    }
+        return user?.roles.some(role => role.name === ERoleName.MOD) || false;
+    };
 
     const isAdmin = (): boolean => {
-        return user?.roles.some(role => role.name === ERoleName.ADMIN) as boolean;
-    }
+        return user?.roles.some(role => role.name === ERoleName.ADMIN) || false;
+    };
 
     return {
         user,
@@ -80,7 +92,7 @@ const useValue = () => {
         isModerator,
         isAdmin
     };
-}
+};
 
 export const UserContext = createContext({} as ReturnType<typeof useValue>);
 export const useAuth = () => useContext(UserContext);
